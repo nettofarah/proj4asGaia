@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 creationComplete="this.init()" xmlns:view="br.ufla.lemaf.coordinates.view.*"
+		 >
+	
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import br.ufla.lemaf.coordinates.model.Point;
+			import br.ufla.lemaf.coordinates.model.ReferenceSystem;
+			import br.ufla.lemaf.coordinates.model.transformer.DegreeMinutesSecondsProjectionTransformer;
+			import br.ufla.lemaf.coordinates.model.transformer.Proj4ProjectionTransformer;
+			import br.ufla.lemaf.coordinates.pm.CoordinatesPM;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable]
+			private var model:CoordinatesPM;
+			
+			public function init():void{
+				
+				this.model = new CoordinatesPM(new ArrayCollection([
+						new ReferenceSystem("Coordenadas Geográficas Decimais","EPSG:4326","+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"), 
+						new ReferenceSystem("Coordenadas Geográficas em Grau, Minuto e Segundo","GMS",""), 
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 22S","EPSG:29182","+proj=utm +zone=22 +south +ellps=GRS67 +units=m +no_defs"),
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 23S","EPSG:29183","+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"),
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 24S","EPSG:29184","+proj=utm +zone=24 +south +ellps=GRS67 +units=m +no_defs"),
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 22S","EPSG:31982","+proj=utm +zone=22 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 23S","EPSG:31983","+proj=utm +zone=23 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 24S","EPSG:31984","+proj=utm +zone=24 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 22S","EPSG:22522","+proj=utm +zone=22 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs"),
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 23S","EPSG:22523","+proj=utm +zone=23 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs"),
+						new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 24S","EPSG:22524","+proj=utm +zone=24 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs")
+					]),
+					new Proj4ProjectionTransformer()
+				);
+				this.combo.selectedIndex = 0;
+
+				this.pointView.xText.text = "";
+				this.pointView.yText.text = "";
+			}
+			
+			public function changeReferenceSystem(e:IndexChangeEvent):void{
+				var from:ReferenceSystem = this.model.availableSystems.getItemAt(e.oldIndex) as ReferenceSystem;
+				var to:ReferenceSystem = this.model.availableSystems.getItemAt(e.newIndex) as ReferenceSystem;
+				
+				var x:Number = new Number(this.pointView.xText.text);
+				var y:Number = new Number(this.pointView.yText.text);
+				
+				this.model.point = new br.ufla.lemaf.coordinates.model.Point(x,y);
+
+				if (to.src == "GMS"){
+					this.model.transformer = new DegreeMinutesSecondsProjectionTransformer();
+				}else{
+					this.model.transformer = new Proj4ProjectionTransformer();
+				}
+				
+				this.model.changeReference(from,to);
+			}
+		]]>
+	</fx:Script>
+	
+	<s:VGroup width="100%" height="100%" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+		
+		<s:Label text="Sistema de Referencia de Coordenadas" />
+		<s:ComboBox width="100%" id="combo" dataProvider="{this.model.availableSystems}" change="this.changeReferenceSystem(event);" />
+		
+		<mx:Spacer height="10" />
+		
+		<view:DefaultPointView width="100%" id="pointView" point="{this.model.point}" />
+		
+	</s:VGroup>
+	
+</s:Group>
