@@ -1,0 +1,7 @@
+.FlexUnitSettings
+bin-debug/
+.flexProperties
+.actionScriptProperties
+.settings
+.project
+html-template/

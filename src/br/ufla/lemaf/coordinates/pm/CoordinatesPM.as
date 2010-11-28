@@ -1,8 +1,8 @@
 package br.ufla.lemaf.coordinates.pm
 {
 	import br.ufla.lemaf.coordinates.model.Point;
-	import br.ufla.lemaf.coordinates.model.transformer.ProjectionTransformer;
 	import br.ufla.lemaf.coordinates.model.ReferenceSystem;
+	import br.ufla.lemaf.coordinates.model.transformer.ProjectionTransformer;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -14,7 +14,7 @@ package br.ufla.lemaf.coordinates.pm
 	public class CoordinatesPM
 	{
 		private var _availableSystems:ArrayCollection = new ArrayCollection();
-		public var point:Point = new Point(0,0);
+		public var point:Point = Point.fromAxis(0,0);
 		public var transformer:ProjectionTransformer;
 		
 		public function CoordinatesPM(coordinateSystems:ArrayCollection, transformer:ProjectionTransformer){

@@ -21,7 +21,7 @@ package br.ufla.lemaf.coordinates.model.transformer
 			var projPoint:ProjPoint = new ProjPoint(point.x,point.y);			
 			Proj4as.transform(projFrom, projTo, projPoint);
 			
-			return new Point(projPoint.x,projPoint.y);
+			return  Point.fromAxis(projPoint.x,projPoint.y);
 		}
 		
 		private function teach(... refs:Array):void{

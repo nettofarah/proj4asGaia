@@ -11,6 +11,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import br.ufla.lemaf.coordinates.model.DMSCoordinate;
 			import br.ufla.lemaf.coordinates.model.Point;
 			import br.ufla.lemaf.coordinates.model.ReferenceSystem;
 			import br.ufla.lemaf.coordinates.model.transformer.DegreeMinutesSecondsProjectionTransformer;
@@ -18,18 +19,20 @@
 			import br.ufla.lemaf.coordinates.pm.CoordinatesPM;
 			
 			import mx.collections.ArrayCollection;
-			import mx.controls.Alert;
 			
 			import spark.events.IndexChangeEvent;
 			
 			[Bindable]
 			private var model:CoordinatesPM;
 			
+			[Bindable]
+			private var isDegree:Boolean = false;
+			
 			public function init():void{
 				
 				this.model = new CoordinatesPM(new ArrayCollection([
 						new ReferenceSystem("Coordenadas Geográficas Decimais","EPSG:4326","+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"), 
-						new ReferenceSystem("Coordenadas Geográficas em Grau, Minuto e Segundo","GMS",""), 
+						new ReferenceSystem("Coordenadas Geográficas em Grau, Minuto e Segundo","DMS","+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"), 
 						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 22S","EPSG:29182","+proj=utm +zone=22 +south +ellps=GRS67 +units=m +no_defs"),
 						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 23S","EPSG:29183","+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"),
 						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 24S","EPSG:29184","+proj=utm +zone=24 +south +ellps=GRS67 +units=m +no_defs"),
@@ -54,15 +57,22 @@
 				
 				var x:Number = new Number(this.pointView.xText.text);
 				var y:Number = new Number(this.pointView.yText.text);
+				this.model.point = br.ufla.lemaf.coordinates.model.Point.fromAxis(x,y);
 				
-				this.model.point = new br.ufla.lemaf.coordinates.model.Point(x,y);
-
-				if (to.src == "GMS"){
-					this.model.transformer = new DegreeMinutesSecondsProjectionTransformer();
+				if(to.src == "DMS"){
+					this.isDegree = true;
 				}else{
-					this.model.transformer = new Proj4ProjectionTransformer();
+					this.isDegree = false;
+					
+					if(from.src == "DMS"){
+						var xDMS:DMSCoordinate = this.degreeView.xDMS;
+						var yDMS:DMSCoordinate = this.degreeView.yDMS;
+						this.model.point = br.ufla.lemaf.coordinates.model.Point.fromDMS(xDMS, yDMS);
+					}
+					
 				}
 				
+				this.model.transformer = new Proj4ProjectionTransformer();
 				this.model.changeReference(from,to);
 			}
 		]]>
@@ -75,7 +85,9 @@
 		
 		<mx:Spacer height="10" />
 		
-		<view:DefaultPointView width="100%" id="pointView" point="{this.model.point}" />
+		<view:DefaultPointView width="100%" visible="{!isDegree}" includeInLayout="{!isDegree}" id="pointView" point="{this.model.point}" />
+		
+		<view:DegreeMinuteSecondPointView width="100%" visible="{isDegree}" includeInLayout="{isDegree}" id="degreeView" point="{this.model.point}" />
 		
 	</s:VGroup>
 	

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+
+	<fx:Script>
+		<![CDATA[
+			import br.ufla.lemaf.coordinates.model.DMSCoordinate;
+			import br.ufla.lemaf.coordinates.model.Point;
+			
+			[Bindable]
+			public var point:br.ufla.lemaf.coordinates.model.Point;
+			
+			public function get xDMS():DMSCoordinate{
+				return new DMSCoordinate(new Number(xDegrees.text), new Number(xMinuts.text), new Number(xSeconds.text) );
+			}
+			
+			public function get yDMS():DMSCoordinate{
+				return new DMSCoordinate(new Number(yDegrees.text), new Number(yMinuts.text), new Number(ySeconds.text) );
+			}
+		]]>
+	</fx:Script>
+	
+	<s:HGroup width="100%" >
+		<s:VGroup width="100%">
+			<s:Label text="Longitude" />
+			<s:HGroup width="100%">
+				<s:VGroup width="100%">
+					<s:Label text="Graus:" />
+					<s:TextInput width="100%" id="xDegrees" text="{point.xDegrees}" />
+				</s:VGroup>
+				<s:VGroup width="100%">
+					<s:Label text="Minutos:" />
+					<s:TextInput width="100%" id="xMinuts"  text="{point.xMinuts}" />
+				</s:VGroup>
+				<s:VGroup width="100%">
+					<s:Label text="Segundos:" />
+					<s:TextInput width="100%" id="xSeconds" text="{point.xSeconds}" />
+				</s:VGroup>
+			</s:HGroup>
+		</s:VGroup>
+		
+		<mx:Spacer width="10" />
+		
+		<s:VGroup width="100%">
+			<s:Label text="Latitude" />
+			<s:HGroup width="100%">
+				<s:VGroup width="100%">
+					<s:Label text="Graus:" />
+					<s:TextInput width="100%" id="yDegrees" text="{point.yDegrees}" />
+				</s:VGroup>
+				<s:VGroup width="100%">
+					<s:Label text="Minutos:" />
+					<s:TextInput width="100%" id="yMinuts" text="{point.yMinuts}" />
+				</s:VGroup>
+				<s:VGroup width="100%">
+					<s:Label text="Segundos:" />
+					<s:TextInput width="100%" id="ySeconds" text="{point.ySeconds}" />
+				</s:VGroup>
+			</s:HGroup>
+		</s:VGroup>
+	</s:HGroup>
+	
+</s:Group>
