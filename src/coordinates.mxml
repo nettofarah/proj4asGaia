@@ -3,6 +3,29 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
 			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:view="br.ufla.lemaf.coordinates.view.*">
 
-	<view:CoordinatesView width="500" />
+	
+	<fx:Script>
+		<![CDATA[
+			import br.ufla.lemaf.coordinates.model.ReferenceSystem;
+			
+			import mx.collections.ArrayCollection;
+			[Bindable]
+			private var references:ArrayCollection = new ArrayCollection([
+				new ReferenceSystem("Coordenadas Geográficas Decimais","EPSG:4326","+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"), 
+				new ReferenceSystem("Coordenadas Geográficas em Grau, Minuto e Segundo","DMS","+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"), 
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 22S","EPSG:29182","+proj=utm +zone=22 +south +ellps=GRS67 +units=m +no_defs"),
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 23S","EPSG:29183","+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"),
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 24S","EPSG:29184","+proj=utm +zone=24 +south +ellps=GRS67 +units=m +no_defs"),
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 22S","EPSG:31982","+proj=utm +zone=22 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 23S","EPSG:31983","+proj=utm +zone=23 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 24S","EPSG:31984","+proj=utm +zone=24 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 22S","EPSG:22522","+proj=utm +zone=22 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs"),
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 23S","EPSG:22523","+proj=utm +zone=23 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs"),
+				new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 24S","EPSG:22524","+proj=utm +zone=24 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs")
+			]);
+		]]>
+	</fx:Script>
+	
+	<view:CoordinatesView width="500" referenceSystems="{this.references}" />
 	
 </s:Application>

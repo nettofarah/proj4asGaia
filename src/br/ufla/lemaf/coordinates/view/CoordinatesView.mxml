@@ -28,21 +28,12 @@
 			[Bindable]
 			private var isDegree:Boolean = false;
 			
+			[Bindable]
+			public var referenceSystems:ArrayCollection;
+			
 			public function init():void{
 				
-				this.model = new CoordinatesPM(new ArrayCollection([
-						new ReferenceSystem("Coordenadas Geográficas Decimais","EPSG:4326","+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"), 
-						new ReferenceSystem("Coordenadas Geográficas em Grau, Minuto e Segundo","DMS","+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"), 
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 22S","EPSG:29182","+proj=utm +zone=22 +south +ellps=GRS67 +units=m +no_defs"),
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 23S","EPSG:29183","+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"),
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM SAD69 24S","EPSG:29184","+proj=utm +zone=24 +south +ellps=GRS67 +units=m +no_defs"),
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 22S","EPSG:31982","+proj=utm +zone=22 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 23S","EPSG:31983","+proj=utm +zone=23 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM SIRGAS 2000 24S","EPSG:31984","+proj=utm +zone=24 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"),
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 22S","EPSG:22522","+proj=utm +zone=22 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs"),
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 23S","EPSG:22523","+proj=utm +zone=23 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs"),
-						new ReferenceSystem("Projetadas em UTM, Com o DATUM Corrego Alegre 24S","EPSG:22524","+proj=utm +zone=24 +south +ellps=intl +towgs84=-206,172,-6,0,0,0,0 +units=m +no_defs")
-					]),
+				this.model = new CoordinatesPM(this.referenceSystems,
 					new Proj4ProjectionTransformer()
 				);
 				this.combo.selectedIndex = 0;
@@ -74,6 +65,35 @@
 				
 				this.model.transformer = new Proj4ProjectionTransformer();
 				this.model.changeReference(from,to);
+			}
+			
+			public function setPoint(point:br.ufla.lemaf.coordinates.model.Point,to:ReferenceSystem=null):void{
+				this.model.point = point;
+				if(to != null){
+					var from:ReferenceSystem = this.model.availableSystems.getItemAt(this.combo.selectedIndex) as ReferenceSystem;
+					this.model.changeReference(from,to);
+					this.setComboTo(to);
+				}
+			}
+			
+			private function setComboTo(to:ReferenceSystem):void{
+				var i:uint = 0;
+				for each (var ref:ReferenceSystem in this.referenceSystems){
+					if (ref.src == to.src){
+						break;
+					}
+					i++;
+				}
+				this.combo.selectedIndex = i;
+			}
+			
+			public function getPoint(to:ReferenceSystem=null):br.ufla.lemaf.coordinates.model.Point{
+				var from:ReferenceSystem = this.model.availableSystems.getItemAt(this.combo.selectedIndex) as ReferenceSystem;
+				if(to != null){
+					var tempPoint:br.ufla.lemaf.coordinates.model.Point = br.ufla.lemaf.coordinates.model.Point.fromAxis(this.model.point.x,this.model.point.y);
+					return new Proj4ProjectionTransformer().transform(from,to,tempPoint);
+				}
+				return this.model.point;
 			}
 		]]>
 	</fx:Script>
